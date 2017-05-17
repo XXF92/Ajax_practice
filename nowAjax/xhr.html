@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>xhr对象</title>
+</head>
+<body>
+    <input type="button" value="投票" id="vote">
+    <script>
+        var vote = document.getElementById('vote');
+        vote.addEventListener('click',function(){
+            // 1.建立xhr对象
+            var xhr = new XMLHttpRequest();
+            // 2.建立连接 false异步
+            xhr.open('GET','./vote.php',false);
+            // 3.发送请求
+            xhr.send(null);
+            // 4.接受结果 false 
+            alert(xhr.responseText);
+
+        },false);
+        // console.log(new XMLHttpRequest());
+    </script>
+</body>
+</html>

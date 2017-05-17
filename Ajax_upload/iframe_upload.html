@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>iframe实现文件上传</title>
+</head>
+<body>
+    <h1>iframe实现文件上传</h1>
+    <h4 id="info"></h4>
+    <form action="./iframe_upload.php" method="post" enctype="multipart/form-data" onsubmit="return up();">
+        <p><input type="file" name="upload"></p>
+        <p><input type="submit" id="button" value="上传"></p>
+    </form>
+
+    <script>
+        /*
+        1.form表单提交文件上传
+        2.js建立iframe标签，把form表单的target指向该frame
+        3.js删除iframe标签
+         */
+        function up(){
+            var body = document.getElementsByTagName('body')[0];
+            var form = document.getElementsByTagName('form')[0];
+            var iframe = document.createElement('iframe');
+            var rand = Math.random();
+
+            iframe.setAttribute('src','./iframe_upload.php');
+            iframe.setAttribute('name','iframe_'+rand);
+            body.appendChild(iframe);
+
+            form.setAttribute('target','iframe_'+rand);
+
+            // 上传等待图片
+            var img = document.createElement('img');
+            img.setAttribute('src','up.gif');
+            img.setAttribute('width','30px');
+            img.setAttribute('height','30px');
+            var info = document.getElementById('info');
+            info.appendChild(img);
+
+            //删除iframe
+            // body.removeChild(iframe);
+        }
+    </script>
+    
+</body>
+</html>

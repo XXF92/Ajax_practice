@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>大文件切割上传</title>
+    <style>
+        #progress{
+            width: 300px;
+            height:20px;
+            background-color: red;
+        }
+        #complete{
+            width:0%;
+            height:100%;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>大文件切割上传</h1>
+    <h4>进度：<div><div id="progress"><div id="complete"></div><span id="num"></span></h4>
+    <h4 id="state"></h4>
+    
+    <input type="file" onchange="ch();">
+    <p id="info"></p>
+    
+    <script>
+        // 大文件切割上传
+        function ch(){
+            // 读取上传文件
+            var file = document.getElementsByTagName('input')[0].files[0];
+          
+            //文件切割
+            var totalSize = file.size;//上传文件大小
+            var currSize =0; //已经上传的文件大小
+            var size = 10*1024*1024;//切割大小
+            var start = 0;//文件切割起点
+            var end = start +size;//文件切割终点
+            // 循环切割内容并发送请求
+            while(currSize < totalSize){
+                var blob = file.slice(start,end);
+                start = end;
+                if ((totalSize - currSize) > size) {
+                    end = end + size;
+                }else{
+                    end = end + (totalSize - currSize);
+                }
+                currSize = start;
+
+                //上传文件
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST','./big_blob_slice_upload.php',false);
+                var fd = new FormData();
+                fd.append('file',blob);
+                xhr.send(fd);
+
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState == 4) {
+                        alert(xhr.responseText);
+                    }
+                }
+                var precent = 100*Math.ceil((currSize/totalSize));
+                document.getElementById('complete').style.width = precent+'%';
+                document.getElementById('num').innerHTML= precent+'%';
+
+                // 读取上传进度
+                // var chunk = new Array();
+                // xhr.upload.onprogress = function(ev){
+                //     if (ev.lengthComputable) {
+                //         var precent = 100*Math.ceil((currSize/totalSize));
+                //         document.getElementById('complete').style.width = precent+'%';
+                //         document.getElementById('num').innerHTML= precent+'%';
+
+                //     }
+                // }       
+            }
+
+        }
+    </script>
+    
+</body>
+</html>

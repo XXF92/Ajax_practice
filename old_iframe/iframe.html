@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>利用iframe发送post请求</title>
+</head>
+<body>
+    <span id="info"></span><!--注册结果-->
+    <form action="1.php" method="post" target="frame">
+        <p>用户名：<input type="text" name="username"></p>
+        <p>密码：<input type="text" name="password"></p>
+        <p><input type="submit" value="注册"></p>
+    </form>
+    <iframe src="1.php" name="frame" frameborder="0" >
+        <p><input type="file" name="file"></p>
+    </iframe>
+</body>
+</html>

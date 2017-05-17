@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>jsonp获取百度百科</title>
+</head>
+<body>
+    输入关键字：<input type="text" name="search" id="search">
+    <input type="button" value="百度百科">
+    <p id="content"></p>
+
+    <script>
+        var button = document.getElementsByTagName('input').item(1);
+            
+        var url = '';
+        function aa(data){
+            var info = document.getElementById('content');
+            info.innerHTML = '';
+            for(var k in data){
+                info.innerHTML += k+':'+data[k]+'<br/>';
+            }
+            console.log(data);
+        }
+        button.addEventListener('click',function(){
+            // alert(search);
+            var search = document.getElementById('search').value;
+            url = 'http://baike.baidu.com/api/openapi/BaikeLemmaCardApi?scope=103&format=json&appid=379020&bk_key='+search+'&bk_length=600'+'&callback=aa';
+                // 添加script标签
+                var head = document.getElementsByTagName('head')[0];
+                var script = document.createElement('script');
+                script.setAttribute('src',url);
+                head.appendChild(script);
+            
+        },false);
+       
+
+       
+    </script>
+</body>
+</html>

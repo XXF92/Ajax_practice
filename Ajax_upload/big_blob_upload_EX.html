@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>大文件切割上传(解决进度条问题)</title>
+    <style>
+        #progress{
+            width: 300px;
+            height:20px;
+            background-color: red;
+        }
+        #complete{
+            width:0%;
+            height:100%;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>大文件切割上传(解决进度条问题)</h1>
+    <h4>进度：<div><div id="progress"><div id="complete"></div><span id="num"></span></h4>
+    <h4 id="state"></h4>
+    
+    <input type="file" onchange="ch();">
+    <p id="info"></p>
+    
+    <script>
+        var file = null;
+        var sta = null;
+        var clock = null;
+        function ch(){
+            // 读取上传文件
+            file = document.getElementsByTagName('input')[0].files[0]
+            //使用闭包计数器 记录每次循环的 start end 等信息,防止setInterval每次运行造成初始化
+            sta = (function(){
+                     //文件切割
+                    var totalSize = file.size;//上传文件大小
+                    var currSize =0; //已经上传的文件大小
+                    var size = 10*1024*1024;//切割大小
+                    var start = 0;//文件切割起点
+                    var end = size;//文件切割终点
+                    var blob = null;
+                    var flag = true;//判断此次上传是否完成
+                    var fd = null;
+                    var xhr = null;
+
+                    return function(){
+                        if (flag == false) {
+                            return false;
+                        }
+
+                        flag = true;
+                        //判断大小是否结束定时器循环
+                        if (currSize >= totalSize) {
+                            window.clearInterval(clock);
+                        }
+                        
+                        flag = false;//标志改为false
+                        if (totalSize <= size) {
+                            blob = file;
+                        }else{
+                            blob = file.slice(start,end);
+                            start = end;
+                            if ((totalSize - currSize) > size) {
+                                end = end + size;
+                            }else{
+                                end = end + (totalSize - currSize);
+                            }
+                            currSize = end;
+                        }
+                        
+                        //上传文件
+                        xhr = new XMLHttpRequest();
+                        xhr.open('POST','./big_blob_slice_upload.php',true);
+                        fd = new FormData();
+                        fd.append('file',blob);
+                        xhr.send(fd);
+
+                        xhr.onreadystatechange = function(){
+                            if (xhr.readyState == 4) {
+                                // alert(xhr.responseText);
+                                flag = true;//标志改为true
+                            }
+                        }
+                        //显示进度
+                        var precent = Math.ceil((currSize/totalSize)*100);
+                        document.getElementById('complete').style.width = precent+'%';
+                        document.getElementById('num').innerHTML= precent+'%';
+                    }
+                })();
+            // 设置定时器，每隔一段时间分块上传文件
+            clock = window.setInterval(sta,1000);     
+        }
+    </script>  
+
+
+</body>
+</html>

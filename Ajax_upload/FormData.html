@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>FormData实现文件上传</title>
+    <style>
+        #progress{
+            width: 300px;
+            height:20px;
+            background-color: red;
+        }
+        #complete{
+            width:0%;
+            height:100%;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>FormData实现文件上传</h1>
+    <h4>进度：<div><div id="progress"><div id="complete"></div><span id="num"></span></h4>
+    <h4 id="state"></h4>
+    
+    <input type="file" onchange="ch();">
+    <p id="info"></p>
+    <p>
+        <h1>预览</h1><br/>
+        <img id="see" width="800px">
+    </p>
+    
+    <script>
+        function ch(){
+            // 创建xhr对象
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST','./FormData.php',true);
+            var state = document.getElementById('state');
+            xhr.onreadystatechange = function(){ 
+                if (xhr.readyState == 4) {            
+                    state.innerHTML = xhr.responseText;
+                }
+            }
+            state.innerHTML = '<img src="up.gif" width="30px" height="30px">';
+            // 读取上传文件,并发送
+            var file = document.getElementsByTagName('input')[0].files[0];
+            var fd = new FormData();
+            fd.append('file',file);
+            xhr.send(fd);
+            //输出上传文件预览
+            var info = document.getElementById('info');
+            info.innerHTML = '';
+            for(var k in file){
+                info.innerHTML += k+': '+file[k]+'<br/>';
+            }
+            var see = document.getElementById('see');
+            see.src = window.URL.createObjectURL(file);
+            // 显示上传进度
+            xhr.upload.onprogress = function(ev){
+                // 判断文件大小是否可以读取
+                if (ev.lengthComputable) {
+                    var pro = 100*ev.loaded/ev.total;
+                    document.getElementById('complete').style.width = pro+'%';
+                    document.getElementById('num').innerHTML = Math.ceil(pro)+'%';
+                }
+            }
+        }
+        
+    </script>
+</body>
+</html>

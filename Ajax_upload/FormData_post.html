@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keyword" content="布尔教育">
+    <title>FormData实现post提交</title>
+</head>
+<body>
+    <form action="FormData_post.php" method="post" name="form" onsubmit="return po();">
+        <p>用户名：<input type="text" name="username"></p>
+        <p>密码：<input type="text" name="psd"></p>
+        <p>邮箱：<input type="text" name="email"></p>
+        <p><input type="submit" value="提交"></p>
+    </form>
+    <p id="info"></p>
+    <script>
+        function po(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST','FormData_post.php',true);
+            var info = document.getElementById('info');
+
+            var form = document.getElementsByTagName('form')[0];
+            var fd = new FormData();
+            fd.append('education','大学本科');
+            xhr.onreadystatechange = function(){
+                if (xhr.readyState == 4) {
+                    info.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send(fd);
+            return false;
+        }
+    </script>
+</body>
+</html>
